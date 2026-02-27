@@ -1,0 +1,83 @@
+# Model hyperparameters for water quality prediction.
+# Per-target configs allow tuning for different response distributions.
+
+defaults:
+  spatial_cv_folds: 5
+  spatial_clusters: 8
+  random_seed: 42
+
+xgboost:
+  common:
+    n_estimators: 1000
+    learning_rate: 0.05
+    max_depth: 8
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 5
+    reg_alpha: 0.1
+    reg_lambda: 1.0
+    tree_method: gpu_hist
+    device: cuda
+    random_state: 42
+    n_jobs: -1
+
+  total_alkalinity:
+    max_depth: 8
+    learning_rate: 0.05
+
+  electrical_conductance:
+    max_depth: 8
+    learning_rate: 0.05
+
+  dissolved_reactive_phosphorus:
+    max_depth: 6
+    learning_rate: 0.03
+    min_child_weight: 10
+
+lightgbm:
+  common:
+    n_estimators: 1000
+    learning_rate: 0.05
+    max_depth: 8
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_samples: 10
+    reg_alpha: 0.1
+    reg_lambda: 1.0
+    random_state: 42
+    n_jobs: -1
+    verbose: -1
+
+catboost:
+  common:
+    iterations: 1000
+    depth: 8
+    learning_rate: 0.05
+    l2_leaf_reg: 3.0
+    random_seed: 42
+    verbose: 0
+    task_type: GPU
+
+ensemble:
+  meta_learner: ridge
+  ridge_alpha: 1.0
+  base_models:
+    - xgboost
+    - lightgbm
+    - catboost
+
+feature_engineering:
+  imputation: median
+  missing_indicators:
+    - nir
+    - green
+    - swir16
+    - swir22
+    - NDMI
+    - MNDWI
+  target_transforms:
+    dissolved_reactive_phosphorus: log1p
+  landcover_buffers_deg:
+    - 0.009   # ~1km
+    - 0.045   # ~5km
+  terrain_buffer_deg: 0.005  # ~500m
