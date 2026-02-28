@@ -1,4 +1,8 @@
-datasets/
+datasets/*
+!datasets/*.csv
+!datasets/external/
+datasets/external/*
+!datasets/external/*.csv
 outputs/
 notebooks/reference/
 __pycache__/
