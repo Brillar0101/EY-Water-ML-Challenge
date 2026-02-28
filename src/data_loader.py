@@ -41,6 +41,14 @@ def load_terraclimate_features(split="train"):
     return df
 
 
+def _parse_dates(series):
+    """Parse dates flexibly — handles both DD-MM-YYYY and YYYY-MM-DD formats."""
+    try:
+        return pd.to_datetime(series, dayfirst=True)
+    except (ValueError, TypeError):
+        return pd.to_datetime(series, format="mixed", dayfirst=True)
+
+
 def load_extended_terraclimate(split="train"):
     """Load extended TerraClimate features (all 14 variables) if available."""
     fname = f"{split}_terraclimate_extended.csv"
@@ -48,7 +56,7 @@ def load_extended_terraclimate(split="train"):
     if not fpath.exists():
         return None
     df = pd.read_csv(fpath)
-    df["Sample Date"] = pd.to_datetime(df["Sample Date"], dayfirst=True)
+    df["Sample Date"] = _parse_dates(df["Sample Date"])
     return df
 
 
