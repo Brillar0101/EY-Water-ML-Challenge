@@ -146,10 +146,6 @@ def extract_all_variables(split="train"):
     print(f"\nExtracting TerraClimate for {split} ({len(target_df)} rows)")
     print(f"Variables: {TC_VARIABLES}")
 
-    # Load the TerraClimate dataset once
-    print("\nConnecting to TerraClimate dataset...")
-    ds = load_terraclimate_dataset()
-
     # Output dataframe starts with location/date identifiers
     result_df = target_df[["Latitude", "Longitude", "Sample Date"]].copy()
 
@@ -167,6 +163,10 @@ def extract_all_variables(split="train"):
                 print(f"  Already extracted, skipping...")
                 result_df[var_name] = existing[var_name].values
                 continue
+
+        # Reload dataset each variable to get a fresh auth token
+        print("  Connecting to TerraClimate dataset (fresh token)...")
+        ds = load_terraclimate_dataset()
 
         # Filter for South Africa region
         tc_filtered = filter_south_africa(ds, var_name)
