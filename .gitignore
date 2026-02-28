@@ -1,0 +1,7 @@
+datasets/
+outputs/
+notebooks/reference/
+__pycache__/
+*.pyc
+.env
+.claude
